@@ -167,10 +167,10 @@ For technical issues, data queries, or suggestions for improvement:
 ## 🔮 Roadmap
 
 ### Upcoming Features
-- [-] Real-time API integration with more data sources
-- [-] Advanced forecasting models
+- [ ] Real-time API integration with more data sources
+- [ ] Advanced forecasting models
 - [ ] Comparative analysis with other UK regions
-- [-] Enhanced scenario modeling capabilities
+- [ ] Enhanced scenario modeling capabilities
 
 ### Data Enhancements
 - [ ] Weekly high-frequency indicators
