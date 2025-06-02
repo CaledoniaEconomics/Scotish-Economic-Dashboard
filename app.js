@@ -1,189 +1,13 @@
 // Scottish Economic Health Dashboard JavaScript
 
-// Economic data
-const economicData = {
-  "headline_indicators": {
-    "gdp_growth": {
-      "current": 1.1,
-      "quarterly": [
-        {"period": "Q1 2024", "value": 0.3},
-        {"period": "Q2 2024", "value": 0.2},
-        {"period": "Q3 2024", "value": 0.4},
-        {"period": "Q4 2024", "value": 0.0},
-        {"period": "Q1 2025", "value": 0.7}
-      ],
-      "annual": [
-        {"year": 2020, "value": -9.7},
-        {"year": 2021, "value": 4.1},
-        {"year": 2022, "value": 2.8},
-        {"year": 2023, "value": 0.5},
-        {"year": 2024, "value": 1.1}
-      ]
-    },
-    "inflation": {
-      "current": 3.5,
-      "monthly": [
-        {"month": "Jan 2024", "cpi": 4.0, "rpi": 4.9},
-        {"month": "Feb 2024", "cpi": 3.4, "rpi": 4.5},
-        {"month": "Mar 2024", "cpi": 3.2, "rpi": 4.3},
-        {"month": "Apr 2024", "cpi": 2.3, "rpi": 3.3},
-        {"month": "May 2024", "cpi": 2.0, "rpi": 2.9},
-        {"month": "Jun 2024", "cpi": 2.0, "rpi": 2.9},
-        {"month": "Jul 2024", "cpi": 2.2, "rpi": 3.2},
-        {"month": "Aug 2024", "cpi": 2.2, "rpi": 3.2},
-        {"month": "Sep 2024", "cpi": 1.7, "rpi": 2.4},
-        {"month": "Oct 2024", "cpi": 2.3, "rpi": 3.3},
-        {"month": "Nov 2024", "cpi": 2.3, "rpi": 3.4},
-        {"month": "Dec 2024", "cpi": 2.5, "rpi": 3.5},
-        {"month": "Jan 2025", "cpi": 3.0, "rpi": 3.9},
-        {"month": "Feb 2025", "cpi": 3.2, "rpi": 4.1},
-        {"month": "Mar 2025", "cpi": 3.3, "rpi": 4.2},
-        {"month": "Apr 2025", "cpi": 3.5, "rpi": 4.4}
-      ]
-    },
-    "unemployment": {
-      "current": 3.7,
-      "quarterly": [
-        {"period": "Q1 2024", "scotland": 4.3, "uk": 4.2},
-        {"period": "Q2 2024", "scotland": 4.1, "uk": 4.4},
-        {"period": "Q3 2024", "scotland": 3.3, "uk": 4.3},
-        {"period": "Q4 2024", "scotland": 3.6, "uk": 4.1},
-        {"period": "Q1 2025", "scotland": 3.7, "uk": 4.2}
-      ]
-    },
-    "employment_rate": {
-      "current": 74.1,
-      "quarterly": [
-        {"period": "Q1 2024", "scotland": 73.5, "uk": 74.5},
-        {"period": "Q2 2024", "scotland": 73.8, "uk": 74.8},
-        {"period": "Q3 2024", "scotland": 73.7, "uk": 74.8},
-        {"period": "Q4 2024", "scotland": 73.2, "uk": 74.5},
-        {"period": "Q1 2025", "scotland": 74.1, "uk": 74.7}
-      ]
-    }
-  },
-  "business_metrics": {
-    "confidence_index": {
-      "current": 10.4,
-      "quarterly": [
-        {"period": "Q1 2024", "scotland": 14.2, "uk": 8.1},
-        {"period": "Q2 2024", "scotland": 15.8, "uk": 12.3},
-        {"period": "Q3 2024", "scotland": 14.2, "uk": 10.2},
-        {"period": "Q4 2024", "scotland": 13.1, "uk": 0.2},
-        {"period": "Q1 2025", "scotland": 10.4, "uk": -3.0}
-      ]
-    },
-    "business_barometer": {
-      "current": 52,
-      "monthly": [
-        {"month": "Feb 2025", "value": 53},
-        {"month": "Mar 2025", "value": 48},
-        {"month": "Apr 2025", "value": 40},
-        {"month": "May 2025", "value": 52}
-      ]
-    },
-    "input_costs": {
-      "increase_percentage": 82,
-      "sectors": [
-        {"sector": "Manufacturing", "increase": 85},
-        {"sector": "Services", "increase": 78},
-        {"sector": "Construction", "increase": 88},
-        {"sector": "Retail", "increase": 75}
-      ]
-    }
-  },
-  "sectoral_performance": {
-    "renewable_energy": {
-      "electricity_generation_percentage": 113,
-      "capacity_gw": 15.0,
-      "breakdown": [
-        {"source": "Onshore Wind", "percentage": 62, "capacity_gw": 9.3},
-        {"source": "Offshore Wind", "percentage": 15, "capacity_gw": 2.25},
-        {"source": "Hydro", "percentage": 12, "capacity_gw": 1.8},
-        {"source": "Solar", "percentage": 8, "capacity_gw": 1.2},
-        {"source": "Other", "percentage": 3, "capacity_gw": 0.45}
-      ]
-    },
-    "food_drink": {
-      "export_value_bn": 8.1,
-      "growth_rate": 30.6,
-      "breakdown": [
-        {"category": "Beverages", "value_bn": 6.2, "percentage": 76},
-        {"category": "Food", "value_bn": 1.9, "percentage": 24}
-      ]
-    },
-    "financial_services": {
-      "gva_bn": 14.76,
-      "percentage_of_economy": 10,
-      "employment": 149000,
-      "growth_target_bn": 21
-    },
-    "tourism": {
-      "enterprises": 14145,
-      "employment": 207000,
-      "turnover_bn": 6.93,
-      "gva_bn": 3.76
-    }
-  },
-  "labour_market": {
-    "employment_rate": 74.1,
-    "economic_inactivity": 22.9,
-    "youth_unemployment": 9.3,
-    "skills_shortages": {
-      "percentage_with_vacancies": 25,
-      "skill_shortage_vacancies": 31,
-      "affected_areas": ["Skilled trades", "Associate professionals", "Professionals"],
-      "skills_needed": ["Technical", "Analytical", "Digital"]
-    },
-    "regional_employment": [
-      {"region": "Orkney Islands", "rate": 87.1},
-      {"region": "Perth and Kinross", "rate": 83.4},
-      {"region": "Na h-Eileanan Siar", "rate": 82.3},
-      {"region": "Glasgow City", "rate": 67.3},
-      {"region": "Inverclyde", "rate": 68.3},
-      {"region": "Dundee City", "rate": 68.6}
-    ]
-  },
-  "trade_data": {
-    "exports": {
-      "total_goods_bn": 45.5,
-      "eu_percentage": 38,
-      "top_destinations": [
-        {"country": "Netherlands", "value_bn": 5.2},
-        {"country": "United States", "value_bn": 4.8},
-        {"country": "Germany", "value_bn": 3.1},
-        {"country": "France", "value_bn": 2.9},
-        {"country": "Norway", "value_bn": 2.3}
-      ]
-    },
-    "imports": {
-      "total_goods_bn": 38.2,
-      "eu_percentage": 49,
-      "top_sources": [
-        {"country": "EU", "percentage": 49},
-        {"country": "United States", "percentage": 13},
-        {"country": "China", "percentage": 13}
-      ]
-    }
-  },
-  "forecasting_scenarios": {
-    "baseline": {
-      "gdp_growth": [1.3, 1.4, 1.5, 1.6, 1.7],
-      "unemployment": [3.8, 3.9, 4.0, 4.1, 4.2],
-      "inflation": [2.5, 2.3, 2.1, 2.0, 2.0]
-    },
-    "optimistic": {
-      "gdp_growth": [1.8, 2.0, 2.2, 2.3, 2.4],
-      "unemployment": [3.2, 3.0, 2.8, 2.7, 2.6],
-      "inflation": [2.0, 1.8, 1.9, 2.0, 2.1]
-    },
-    "pessimistic": {
-      "gdp_growth": [0.8, 0.6, 0.9, 1.0, 1.1],
-      "unemployment": [4.5, 5.2, 5.8, 5.5, 5.0],
-      "inflation": [3.2, 3.8, 3.5, 3.0, 2.8]
-    }
-  }
+// Placeholder for loaded economic data (includes precomputed scenarios)
+let economicData = {
+  /* ... existing economic data ... */,  // comma added here
+  // placeholder for fetched scenario outputs
+  scenarios: {}
 };
+// Current scenario selection for chart
+let currentScenario = 'baseline';
 
 // Color palette for charts
 const chartColors = ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F', '#DB4545', '#D2BA4C', '#964325', '#944454', '#13343B'];
@@ -215,6 +39,20 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeCharts();
     initializeScenarioControls();
     initializeExportFunctionality();
+
+    // fetch and wire in precomputed scenarios after DOM ready
+    fetch('scottish_economic_data.json')
+      .then(r => r.json())
+      .then(d => {
+          if (d.scenarios) {
+              economicData.scenarios = d.scenarios;
+              // mark default scenario button active
+              const defaultBtn = document.querySelector(`[data-scenario="${currentScenario}"]`);
+              if (defaultBtn) defaultBtn.classList.add('active');
+              initializeScenarioCharts();
+          }
+      })
+      .catch(console.error);
 });
 
 // Navigation functionality
@@ -936,8 +774,7 @@ function initializeTradeCharts() {
                         position: 'bottom'
                     }
                 }
-            }
-        });
+            });
     }
 
     // Imports chart
@@ -969,8 +806,7 @@ function initializeTradeCharts() {
                         position: 'bottom'
                     }
                 }
-            }
-        });
+            });
     }
 
     // Export destinations chart
@@ -1009,8 +845,7 @@ function initializeTradeCharts() {
                         }
                     }
                 }
-            }
-        });
+            });
     }
 }
 
@@ -1045,149 +880,71 @@ function initializeScenarioControls() {
         }
     });
 
-    // Scenario buttons
+    // Scenario buttons: set active scenario
     document.querySelectorAll('[data-scenario]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const scenario = this.dataset.scenario;
-            applyScenario(scenario, sliders, values);
+        btn.addEventListener('click', () => {
+            // Toggle active class
+            document.querySelectorAll('[data-scenario]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // Update scenario and chart
+            currentScenario = btn.dataset.scenario;
+            updateScenarioChart();
         });
     });
-}
-
-function applyScenario(scenario, sliders, values) {
-    const scenarios = {
-        optimistic: { gdp: 2.2, inflation: 2.0, confidence: 20, employment: 2.5 },
-        baseline: { gdp: 1.5, inflation: 2.5, confidence: 10, employment: 1.5 },
-        pessimistic: { gdp: 0.8, inflation: 3.5, confidence: -10, employment: 0.5 }
-    };
-
-    const params = scenarios[scenario];
-    Object.keys(params).forEach(key => {
-        if (sliders[key]) {
-            sliders[key].value = params[key];
-            if (key === 'confidence') {
-                values[key].textContent = params[key] > 0 ? '+' + params[key] : params[key];
-            } else {
-                values[key].textContent = params[key] + '%';
-            }
-        }
-    });
-
-    updateScenarioChart();
 }
 
 function initializeScenarioCharts() {
-    // Initialize scenario chart
-    const scenarioCtx = document.getElementById('scenarioChart');
-    if (scenarioCtx) {
-        chartInstances.scenarioChart = new Chart(scenarioCtx, {
-            type: 'line',
-            data: {
-                labels: ['2025', '2026', '2027', '2028', '2029'],
-                datasets: [{
-                    label: 'GDP Growth (%)',
-                    data: [1.5, 1.6, 1.7, 1.8, 1.9],
-                    borderColor: chartColors[0],
-                    backgroundColor: chartColors[0] + '20',
-                    yAxisID: 'y'
-                }, {
-                    label: 'Unemployment (%)',
-                    data: [3.8, 3.9, 4.0, 4.1, 4.2],
-                    borderColor: chartColors[1],
-                    backgroundColor: chartColors[1] + '20',
-                    yAxisID: 'y1'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'GDP Growth (%)'
-                        }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        title: {
-                            display: true,
-                            text: 'Unemployment (%)'
-                        },
-                        grid: {
-                            drawOnChartArea: false,
-                        },
-                    }
-                }
-            }
-        });
-    }
-
-    // Scenario comparison chart
-    const comparisonCtx = document.getElementById('scenarioComparisonChart');
-    if (comparisonCtx) {
-        chartInstances.scenarioComparisonChart = new Chart(comparisonCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Optimistic', 'Baseline', 'Pessimistic'],
-                datasets: [{
-                    label: 'Average GDP Growth',
-                    data: [2.1, 1.5, 0.9],
-                    backgroundColor: chartColors.slice(0, 3),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.dataset.label}: ${context.parsed.y}%`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
+    const ctx = document.getElementById('scenarioChart');
+    if (!ctx) return;
+    chartInstances.scenarioChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+              { label: 'GDP Growth (%)', data: [], borderColor: chartColors[0], backgroundColor: chartColors[0]+'20', yAxisID:'y' },
+              { label: 'Unemployment (%)', data: [], borderColor: chartColors[1], backgroundColor: chartColors[1]+'20', yAxisID:'y1' }
+            ]
+         },
+         options: {
+             responsive: true,
+             maintainAspectRatio: false,
+             scales: {
+                 y: {
+                     type: 'linear',
+                     display: true,
+                     position: 'left',
+                     title: {
+                         display: true,
+                         text: 'GDP Growth (%)'
+                     }
+                 },
+                 y1: {
+                     type: 'linear',
+                     display: true,
+                     position: 'right',
+                     title: {
+                         display: true,
+                         text: 'Unemployment (%)'
+                     },
+                     grid: {
+                         drawOnChartArea: false,
+                     },
+                 }
+             }
+         });
+    // initial draw once scenarios loaded
+    updateScenarioChart();
 }
 
 function updateScenarioChart() {
-    if (chartInstances.scenarioChart) {
-        // Get current slider values
-        const gdp = parseFloat(document.getElementById('gdpSlider').value);
-        const unemployment = 5 - gdp; // Inverse relationship
-        
-        // Generate 5-year projection
-        const gdpData = [];
-        const unemploymentData = [];
-        
-        for (let i = 0; i < 5; i++) {
-            gdpData.push(gdp + (i * 0.1));
-            unemploymentData.push(unemployment - (i * 0.05));
-        }
-        
-        chartInstances.scenarioChart.data.datasets[0].data = gdpData;
-        chartInstances.scenarioChart.data.datasets[1].data = unemploymentData;
-        chartInstances.scenarioChart.update();
-    }
+    const chart = chartInstances.scenarioChart;
+    const sc = economicData.scenarios && economicData.scenarios[currentScenario];
+    if (!chart || !sc) return;
+    const labels = sc.gdp.map((_,i) => `T+${i+1}`);
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = sc.gdp;
+    chart.data.datasets[1].data = sc.unemployment;
+    chart.update();
 }
 
 // Export functionality

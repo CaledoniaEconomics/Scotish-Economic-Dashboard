@@ -1,0 +1,8 @@
+[
+  { "date": "2024-01-01", "gdp": 1.0, "inflation": 2.5, "unemployment": 4.0 },
+  { "date": "2024-02-01", "gdp": 1.1, "inflation": 2.4, "unemployment": 4.1 },
+  { "date": "2024-03-01", "gdp": 1.2, "inflation": 2.3, "unemployment": 4.2 },
+  { "date": "2024-04-01", "gdp": 1.15, "inflation": 2.2, "unemployment": 4.3 },
+  { "date": "2024-05-01", "gdp": 1.18, "inflation": 2.1, "unemployment": 4.2 },
+  { "date": "2024-06-01", "gdp": 1.2, "inflation": 2.0, "unemployment": 4.1 }
+]

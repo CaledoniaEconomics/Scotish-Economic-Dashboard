@@ -12,12 +12,15 @@ from statsmodels.tsa.arima.model import ARIMA
 
 def load_historical_data(filepath: str) -> pd.DataFrame:
     """Load historical data (GDP, inflation, unemployment) from CSV or JSON."""
+    # support CSV or JSON input
     if filepath.endswith('.json'):
         df = pd.read_json(filepath)
     else:
         df = pd.read_csv(filepath)
     df['date'] = pd.to_datetime(df['date'])
     df.set_index('date', inplace=True)
+    # tag index with monthly start frequency to avoid statsmodels warnings
+    df.index.freq = 'MS'
     return df
 
 
@@ -26,7 +29,12 @@ def forecast_series(series: pd.Series, periods: int) -> pd.Series:
     model = ARIMA(series, order=(1,1,1))
     fitted = model.fit()
     forecast = fitted.forecast(steps=periods)
-    forecast.index = pd.date_range(start=series.index[-1] + pd.offsets.DateOffset(months=1), periods=periods, freq='M')
+    # use month start frequency
+    forecast.index = pd.date_range(
+        start=series.index[-1] + pd.offsets.DateOffset(months=1),
+        periods=periods,
+        freq='MS'
+    )
     return forecast
 
 
@@ -67,5 +75,8 @@ def generate_scenarios(historical_path: str, output_path: str):
         json.dump(scenarios, f, indent=2)
 
 if __name__ == '__main__':
-    # Example usage
-    generate_scenarios('historical_data.json', 'scenarios.json')
+    # Run with CSV and output into scenarios folder
+    generate_scenarios(
+        historical_path='historical_data.csv',
+        output_path=Path(__file__).parent.joinpath('scenarios.json')
+    )

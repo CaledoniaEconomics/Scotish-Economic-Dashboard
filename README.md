@@ -4,7 +4,7 @@ A comprehensive, real-time dashboard providing insights into Scotland's economic
 
 ## 🏴 Live Dashboard
 
-Visit the live dashboard: [Scottish Economic Health Dashboard](https://yourusername.github.io/Economic-Dashboard/)
+Visit the live dashboard: [Scottish Economic Health Dashboard](https://caledoniaeconomics.github.io/Scotish-Economic-Dashboard/)
 
 ## 📊 Key Features
 
@@ -50,7 +50,7 @@ Visit the live dashboard: [Scottish Economic Health Dashboard](https://yourusern
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/Economic-Dashboard.git
+   git clone https://github.com/caledoniaeconomics/Scotish-Economic-Dashboard.git
    cd Economic-Dashboard
    ```
 
@@ -167,12 +167,10 @@ For technical issues, data queries, or suggestions for improvement:
 ## 🔮 Roadmap
 
 ### Upcoming Features
-- [ ] Real-time API integration with more data sources
-- [ ] Advanced forecasting models
+- [~] Real-time API integration with more data sources
+- [~] Advanced forecasting models
 - [ ] Comparative analysis with other UK regions
-- [ ] Mobile app version
-- [ ] Data alerts and notifications
-- [ ] Enhanced scenario modeling capabilities
+- [~] Enhanced scenario modeling capabilities
 
 ### Data Enhancements
 - [ ] Weekly high-frequency indicators
@@ -184,4 +182,3 @@ For technical issues, data queries, or suggestions for improvement:
 ---
 
 **Note**: This dashboard provides analysis based on official statistics and should be used alongside professional economic advice for decision-making.
-# Scotish-Economic-Dashboard

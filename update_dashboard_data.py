@@ -486,10 +486,6 @@ def main():
         fetcher = ScottishEconomicDataFetcher()
         fetcher.update_dashboard()
         
-        print("\nNext steps for GitHub Pages deployment:")
-        print("1. Commit and push changes to your repository")
-        print("2. Enable GitHub Pages in repository settings")
-        print("3. Set up GitHub Actions for daily updates")
         
     except Exception as e:
         logger.error(f"Update process failed: {e}")
