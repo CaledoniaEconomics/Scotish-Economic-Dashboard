@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scottish Economic Health Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-title">
+                    <span class="flag-icon">🏴</span>
+                    <h1>Scottish Economic Health Dashboard</h1>
+                </div>
+                <div class="last-updated">
+                    Last updated: <span id="lastUpdated">June 2, 2025</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="dashboard-nav">
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="overview">Overview</button>
+                <button class="nav-tab" data-tab="headline">Headline Indicators</button>
+                <button class="nav-tab" data-tab="business">Business Metrics</button>
+                <button class="nav-tab" data-tab="sectoral">Sectoral Performance</button>
+                <button class="nav-tab" data-tab="labour">Labour Market</button>
+                <button class="nav-tab" data-tab="trade">Trade Data</button>
+                <button class="nav-tab" data-tab="scenario">Scenario Planning</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="dashboard-main">
+        <div class="container">
+            <!-- Overview Tab -->
+            <section class="tab-content active" id="overview">
+                <div class="summary-grid">
+                    <div class="card summary-card">
+                        <div class="card__body">
+                            <h3>Executive Summary</h3>
+                            <div class="metric-row">
+                                <div class="metric">
+                                    <span class="metric-label">GDP Growth</span>
+                                    <span class="metric-value">1.1%</span>
+                                    <span class="status status--success">Good</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Unemployment</span>
+                                    <span class="metric-value">3.7%</span>
+                                    <span class="status status--success">Low</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Inflation</span>
+                                    <span class="metric-value">3.5%</span>
+                                    <span class="status status--warning">Elevated</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Business Confidence</span>
+                                    <span class="metric-value">+10.4</span>
+                                    <span class="status status--success">Positive</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h4>GDP Growth Trend</h4>
+                            <canvas id="overviewGdpChart" height="200" data-max-height="200"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h4>Unemployment Rate</h4>
+                            <canvas id="overviewUnemploymentChart" height="200" data-max-height="200"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h4>Business Confidence</h4>
+                            <canvas id="overviewBusinessChart" height="200" data-max-height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Headline Indicators Tab -->
+            <section class="tab-content" id="headline">
+                <div class="chart-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Scottish GDP Growth</h3>
+                            <div class="chart-controls">
+                                <button class="btn btn--sm" data-period="quarterly">Quarterly</button>
+                                <button class="btn btn--sm active" data-period="annual">Annual</button>
+                            </div>
+                            <canvas id="gdpChart" height="400" data-max-height="400"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Inflation Rate (CPI/RPI)</h3>
+                            <canvas id="inflationChart" height="400" data-max-height="400"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Unemployment Rate</h3>
+                            <canvas id="unemploymentChart" height="400" data-max-height="400"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Employment Rate</h3>
+                            <canvas id="employmentChart" height="400" data-max-height="400"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Business Metrics Tab -->
+            <section class="tab-content" id="business">
+                <div class="chart-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Business Confidence Index</h3>
+                            <canvas id="businessConfidenceChart" height="400" data-max-height="400"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Business Barometer</h3>
+                            <canvas id="businessBarometerChart" height="400" data-max-height="400"></canvas>
+                        </div>
+                    </div>
+                    <div class="card full-width">
+                        <div class="card__body">
+                            <h3>Input Cost Inflation by Sector</h3>
+                            <canvas id="inputCostsChart" height="300" data-max-height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sectoral Performance Tab -->
+            <section class="tab-content" id="sectoral">
+                <div class="chart-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Renewable Energy</h3>
+                            <div class="metric-highlight">
+                                <span class="metric-value large">113%</span>
+                                <span class="metric-label">of electricity consumption met by renewables</span>
+                            </div>
+                            <canvas id="renewableEnergyChart" height="300" data-max-height="300"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Food & Drink Exports</h3>
+                            <div class="metric-highlight">
+                                <span class="metric-value large">£8.1bn</span>
+                                <span class="metric-label">export value</span>
+                            </div>
+                            <canvas id="foodDrinkChart" height="300" data-max-height="300"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Financial Services</h3>
+                            <div class="metric-row">
+                                <div class="metric">
+                                    <span class="metric-label">GVA</span>
+                                    <span class="metric-value">£14.76bn</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">% of Economy</span>
+                                    <span class="metric-value">10%</span>
+                                </div>
+                            </div>
+                            <canvas id="financialServicesChart" height="300" data-max-height="300"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Tourism Sector</h3>
+                            <div class="metric-row">
+                                <div class="metric">
+                                    <span class="metric-label">Turnover</span>
+                                    <span class="metric-value">£6.93bn</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Employment</span>
+                                    <span class="metric-value">207,000</span>
+                                </div>
+                            </div>
+                            <canvas id="tourismChart" height="300" data-max-height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Labour Market Tab -->
+            <section class="tab-content" id="labour">
+                <div class="chart-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Employment Rate</h3>
+                            <div class="metric-highlight">
+                                <span class="metric-value large">74.1%</span>
+                                <span class="metric-label">current employment rate</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Skills Shortages</h3>
+                            <div class="metric-highlight">
+                                <span class="metric-value large">31%</span>
+                                <span class="metric-label">of vacancies are skill-shortage related</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card full-width">
+                        <div class="card__body">
+                            <h3>Regional Employment Rates</h3>
+                            <canvas id="regionalEmploymentChart" height="400"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Labour Market Overview</h3>
+                            <canvas id="labourMarketChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trade Data Tab -->
+            <section class="tab-content" id="trade">
+                <div class="chart-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Exports Overview</h3>
+                            <div class="metric-highlight">
+                                <span class="metric-value large">£45.5bn</span>
+                                <span class="metric-label">total goods exports</span>
+                            </div>
+                            <canvas id="exportsChart" height="300"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Imports Overview</h3>
+                            <div class="metric-highlight">
+                                <span class="metric-value large">£38.2bn</span>
+                                <span class="metric-label">total goods imports</span>
+                            </div>
+                            <canvas id="importsChart" height="300"></canvas>
+                        </div>
+                    </div>
+                    <div class="card full-width">
+                        <div class="card__body">
+                            <h3>Top Export Destinations</h3>
+                            <canvas id="exportDestinationsChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scenario Planning Tab -->
+            <section class="tab-content" id="scenario">
+                <div class="scenario-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Scenario Builder</h3>
+                            <div class="scenario-controls">
+                                <div class="control-group">
+                                    <label for="gdpSlider">GDP Growth Rate (%)</label>
+                                    <input type="range" id="gdpSlider" min="0.5" max="2.5" step="0.1" value="1.5">
+                                    <span id="gdpValue">1.5%</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="inflationSlider">Inflation Target (%)</label>
+                                    <input type="range" id="inflationSlider" min="2" max="5" step="0.1" value="2.5">
+                                    <span id="inflationValue">2.5%</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="confidenceSlider">Business Confidence</label>
+                                    <input type="range" id="confidenceSlider" min="-20" max="30" step="1" value="10">
+                                    <span id="confidenceValue">+10</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="employmentSlider">Employment Growth (%)</label>
+                                    <input type="range" id="employmentSlider" min="0" max="3" step="0.1" value="1.5">
+                                    <span id="employmentValue">1.5%</span>
+                                </div>
+                            </div>
+                            <div class="scenario-buttons">
+                                <button class="btn btn--secondary" data-scenario="optimistic">Optimistic</button>
+                                <button class="btn btn--secondary" data-scenario="baseline">Baseline</button>
+                                <button class="btn btn--secondary" data-scenario="pessimistic">Pessimistic</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>5-Year Economic Projection</h3>
+                            <canvas id="scenarioChart" height="400"></canvas>
+                        </div>
+                    </div>
+                    <div class="card full-width">
+                        <div class="card__body">
+                            <h3>Scenario Comparison</h3>
+                            <canvas id="scenarioComparisonChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="dashboard-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-actions">
+                    <button class="btn btn--outline" id="exportBtn">Export Data (CSV)</button>
+                    <button class="btn btn--outline" id="printBtn">Print Dashboard</button>
+                </div>
+                <div class="footer-info">
+                    <p>Data sources: Scottish Government, ONS, Scottish Chambers of Commerce</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
