@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Validation</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .section { margin: 20px 0; padding: 10px; border-left: 3px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Scottish Economic Dashboard - Data Validation</h1>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+
+        function log(message, className = '') {
+            const div = document.createElement('div');
+            div.textContent = message;
+            if (className) div.className = className;
+            output.appendChild(div);
+        }
+
+        // Load the JSON data and validate structure
+        fetch('scottish_economic_data.json')
+            .then(response => response.json())
+            .then(data => {
+                log('=== Scottish Economic Dashboard Data Validation ===', 'section');
+                
+                // Validate headline indicators
+                log('1. HEADLINE INDICATORS:', 'section');
+                log(`GDP Growth Quarterly: ${data.headline_indicators?.gdp_growth?.quarterly ? '✓' : '✗'}`, 
+                    data.headline_indicators?.gdp_growth?.quarterly ? 'success' : 'error');
+                log(`GDP Growth Annual: ${data.headline_indicators?.gdp_growth?.annual ? '✓' : '✗'}`, 
+                    data.headline_indicators?.gdp_growth?.annual ? 'success' : 'error');
+                log(`Inflation Monthly: ${data.headline_indicators?.inflation?.monthly ? '✓' : '✗'}`, 
+                    data.headline_indicators?.inflation?.monthly ? 'success' : 'error');
+                log(`Employment Quarterly: ${data.headline_indicators?.employment?.quarterly ? '✓' : '✗'}`, 
+                    data.headline_indicators?.employment?.quarterly ? 'success' : 'error');
+                log(`Employment Regional: ${data.headline_indicators?.employment?.regional ? '✓' : '✗'}`, 
+                    data.headline_indicators?.employment?.regional ? 'success' : 'error');
+                
+                // Validate business confidence
+                log('2. BUSINESS CONFIDENCE:', 'section');
+                log(`Quarterly Data: ${data.business_confidence?.quarterly ? '✓' : '✗'}`, 
+                    data.business_confidence?.quarterly ? 'success' : 'error');
+                log(`Barometer Monthly: ${data.business_confidence?.barometer_monthly ? '✓' : '✗'}`, 
+                    data.business_confidence?.barometer_monthly ? 'success' : 'error');
+                log(`Input Cost Pressures: ${typeof data.business_confidence?.input_cost_pressures === 'number' ? '✓' : '✗'}`, 
+                    typeof data.business_confidence?.input_cost_pressures === 'number' ? 'success' : 'error');
+                
+                // Validate sectoral performance
+                log('3. SECTORAL PERFORMANCE:', 'section');
+                log(`Renewable Energy: ${data.sectoral_performance?.renewable_energy?.breakdown ? '✓' : '✗'}`, 
+                    data.sectoral_performance?.renewable_energy?.breakdown ? 'success' : 'error');
+                log(`Food & Drink Exports: ${data.sectoral_performance?.food_drink_exports?.historical ? '✓' : '✗'}`, 
+                    data.sectoral_performance?.food_drink_exports?.historical ? 'success' : 'error');
+                log(`Financial Services: ${data.sectoral_performance?.financial_services?.historical_gva ? '✓' : '✗'}`, 
+                    data.sectoral_performance?.financial_services?.historical_gva ? 'success' : 'error');
+                log(`Tourism: ${data.sectoral_performance?.tourism?.historical ? '✓' : '✗'}`, 
+                    data.sectoral_performance?.tourism?.historical ? 'success' : 'error');
+                
+                // Validate trade data
+                log('4. TRADE DATA:', 'section');
+                log(`Goods Exports: ${data.trade_data?.goods_exports ? '✓' : '✗'}`, 
+                    data.trade_data?.goods_exports ? 'success' : 'error');
+                log(`Goods Imports: ${data.trade_data?.goods_imports ? '✓' : '✗'}`, 
+                    data.trade_data?.goods_imports ? 'success' : 'error');
+                log(`Export Destinations: ${data.trade_data?.goods_exports?.top_destinations ? '✓' : '✗'}`, 
+                    data.trade_data?.goods_exports?.top_destinations ? 'success' : 'error');
+                
+                // Validate scenario planning
+                log('5. SCENARIO PLANNING:', 'section');
+                log(`GDP Scenarios: ${data.scenario_planning?.gdp_projections ? '✓' : '✗'}`, 
+                    data.scenario_planning?.gdp_projections ? 'success' : 'error');
+                log(`Employment Scenarios: ${data.scenario_planning?.employment_projections ? '✓' : '✗'}`, 
+                    data.scenario_planning?.employment_projections ? 'success' : 'error');
+                
+                // Sample data checks
+                log('=== SAMPLE DATA VALIDATION ===', 'section');
+                
+                // Check GDP data structure
+                if (data.headline_indicators?.gdp_growth?.quarterly?.length > 0) {
+                    const gdpSample = data.headline_indicators.gdp_growth.quarterly[0];
+                    log(`GDP Sample Structure: quarter=${!!'quarter' in gdpSample}, scotland=${!!'scotland' in gdpSample}, uk=${!!'uk' in gdpSample}`);
+                }
+                
+                // Check inflation data structure
+                if (data.headline_indicators?.inflation?.monthly?.length > 0) {
+                    const inflationSample = data.headline_indicators.inflation.monthly[0];
+                    log(`Inflation Sample Structure: date=${!!'date' in inflationSample}, scotland=${!!'scotland' in inflationSample}, uk=${!!'uk' in inflationSample}`);
+                }
+                
+                // Check employment data structure
+                if (data.headline_indicators?.employment?.quarterly?.length > 0) {
+                    const employmentSample = data.headline_indicators.employment.quarterly[0];
+                    log(`Employment Sample Structure: quarter=${!!'quarter' in employmentSample}, employment_rate=${!!'employment_rate' in employmentSample}, unemployment_rate=${!!'unemployment_rate' in employmentSample}`);
+                }
+                
+                log('=== VALIDATION COMPLETE ===', 'section');
+                log('Data structure validation finished. Check results above.', 'success');
+                
+            })
+            .catch(error => {
+                log('Error loading data: ' + error.message, 'error');
+            });
+    </script>
+</body>
+</html>

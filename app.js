@@ -93,12 +93,11 @@ function initializeOverviewCharts() {
     const gdpCtx = document.getElementById('overviewGdpChart');
     if (gdpCtx) {
         chartInstances.overviewGdp = new Chart(gdpCtx, {
-            type: 'line',
-            data: {
+            type: 'line',                data: {
                 labels: economicData.headline_indicators.gdp_growth.quarterly.map(d => d.period),
                 datasets: [{
-                    label: 'GDP Growth (%)',
-                    data: economicData.headline_indicators.gdp_growth.quarterly.map(d => d.value),
+                    label: 'Scotland GDP Growth (%)',
+                    data: economicData.headline_indicators.gdp_growth.quarterly.map(d => d.scotland),
                     borderColor: chartColors[0],
                     backgroundColor: chartColors[0] + '20',
                     tension: 0.4
@@ -129,15 +128,15 @@ function initializeOverviewCharts() {
         chartInstances.overviewUnemployment = new Chart(unemploymentCtx, {
             type: 'line',
             data: {
-                labels: economicData.headline_indicators.unemployment.quarterly.map(d => d.period),
+                labels: economicData.headline_indicators.employment.quarterly.map(d => d.period),
                 datasets: [{
                     label: 'Scotland',
-                    data: economicData.headline_indicators.unemployment.quarterly.map(d => d.scotland),
+                    data: economicData.headline_indicators.employment.quarterly.map(d => d.unemployment_rate),
                     borderColor: chartColors[0],
                     backgroundColor: chartColors[0] + '20'
                 }, {
                     label: 'UK',
-                    data: economicData.headline_indicators.unemployment.quarterly.map(d => d.uk),
+                    data: economicData.headline_indicators.employment.quarterly.map(d => d.unemployment_rate), // Note: JSON might not have UK unemployment data
                     borderColor: chartColors[1],
                     backgroundColor: chartColors[1] + '20'
                 }]
@@ -166,10 +165,10 @@ function initializeOverviewCharts() {
         chartInstances.overviewBusiness = new Chart(businessCtx, {
             type: 'bar',
             data: {
-                labels: economicData.business_metrics.confidence_index.quarterly.map(d => d.period),
+                labels: economicData.business_confidence.quarterly.map(d => d.quarter),
                 datasets: [{
                     label: 'Scotland',
-                    data: economicData.business_metrics.confidence_index.quarterly.map(d => d.scotland),
+                    data: economicData.business_confidence.quarterly.map(d => d.scotland),
                     backgroundColor: chartColors[0],
                 }]
             },
@@ -204,8 +203,8 @@ function initializeHeadlineCharts() {
                 data: {
                     labels: data.map(d => period === 'annual' ? d.year : d.period),
                     datasets: [{
-                        label: 'GDP Growth (%)',
-                        data: data.map(d => d.value),
+                        label: 'Scotland GDP Growth (%)',
+                        data: data.map(d => period === 'annual' ? d.scotland : d.scotland),
                         backgroundColor: chartColors[0],
                         borderColor: chartColors[0],
                         borderWidth: 1
@@ -255,16 +254,16 @@ function initializeHeadlineCharts() {
         chartInstances.inflationChart = new Chart(inflationCtx, {
             type: 'line',
             data: {
-                labels: economicData.headline_indicators.inflation.monthly.map(d => d.month),
+                labels: economicData.headline_indicators.inflation.monthly.map(d => d.date),
                 datasets: [{
-                    label: 'CPI',
-                    data: economicData.headline_indicators.inflation.monthly.map(d => d.cpi),
+                    label: 'Scotland',
+                    data: economicData.headline_indicators.inflation.monthly.map(d => d.scotland),
                     borderColor: chartColors[0],
                     backgroundColor: chartColors[0] + '20',
                     tension: 0.4
                 }, {
-                    label: 'RPI',
-                    data: economicData.headline_indicators.inflation.monthly.map(d => d.rpi),
+                    label: 'UK',
+                    data: economicData.headline_indicators.inflation.monthly.map(d => d.uk),
                     borderColor: chartColors[1],
                     backgroundColor: chartColors[1] + '20',
                     tension: 0.4
@@ -300,18 +299,12 @@ function initializeHeadlineCharts() {
         chartInstances.unemploymentChart = new Chart(unemploymentCtx, {
             type: 'line',
             data: {
-                labels: economicData.headline_indicators.unemployment.quarterly.map(d => d.period),
+                labels: economicData.headline_indicators.employment.quarterly.map(d => d.period),
                 datasets: [{
-                    label: 'Scotland',
-                    data: economicData.headline_indicators.unemployment.quarterly.map(d => d.scotland),
+                    label: 'Scotland Unemployment Rate',
+                    data: economicData.headline_indicators.employment.quarterly.map(d => d.unemployment_rate),
                     borderColor: chartColors[0],
                     backgroundColor: chartColors[0] + '20',
-                    tension: 0.4
-                }, {
-                    label: 'UK Average',
-                    data: economicData.headline_indicators.unemployment.quarterly.map(d => d.uk),
-                    borderColor: chartColors[1],
-                    backgroundColor: chartColors[1] + '20',
                     tension: 0.4
                 }]
             },
@@ -346,18 +339,12 @@ function initializeHeadlineCharts() {
         chartInstances.employmentChart = new Chart(employmentCtx, {
             type: 'line',
             data: {
-                labels: economicData.headline_indicators.employment_rate.quarterly.map(d => d.period),
+                labels: economicData.headline_indicators.employment.quarterly.map(d => d.period),
                 datasets: [{
-                    label: 'Scotland',
-                    data: economicData.headline_indicators.employment_rate.quarterly.map(d => d.scotland),
+                    label: 'Scotland Employment Rate',
+                    data: economicData.headline_indicators.employment.quarterly.map(d => d.employment_rate),
                     borderColor: chartColors[0],
                     backgroundColor: chartColors[0] + '20',
-                    tension: 0.4
-                }, {
-                    label: 'UK Average',
-                    data: economicData.headline_indicators.employment_rate.quarterly.map(d => d.uk),
-                    borderColor: chartColors[1],
-                    backgroundColor: chartColors[1] + '20',
                     tension: 0.4
                 }]
             },
@@ -397,14 +384,14 @@ function initializeBusinessCharts() {
         chartInstances.businessConfidenceChart = new Chart(businessConfidenceCtx, {
             type: 'bar',
             data: {
-                labels: economicData.business_metrics.confidence_index.quarterly.map(d => d.period),
+                labels: economicData.business_confidence.quarterly.map(d => d.quarter),
                 datasets: [{
                     label: 'Scotland',
-                    data: economicData.business_metrics.confidence_index.quarterly.map(d => d.scotland),
+                    data: economicData.business_confidence.quarterly.map(d => d.scotland),
                     backgroundColor: chartColors[0]
                 }, {
                     label: 'UK Average',
-                    data: economicData.business_metrics.confidence_index.quarterly.map(d => d.uk),
+                    data: economicData.business_confidence.quarterly.map(d => d.uk),
                     backgroundColor: chartColors[1]
                 }]
             },
@@ -434,10 +421,10 @@ function initializeBusinessCharts() {
         chartInstances.businessBarometerChart = new Chart(businessBarometerCtx, {
             type: 'line',
             data: {
-                labels: economicData.business_metrics.business_barometer.monthly.map(d => d.month),
+                labels: economicData.business_confidence.barometer_monthly.map(d => d.month),
                 datasets: [{
                     label: 'Business Barometer',
-                    data: economicData.business_metrics.business_barometer.monthly.map(d => d.value),
+                    data: economicData.business_confidence.barometer_monthly.map(d => d.value),
                     borderColor: chartColors[0],
                     backgroundColor: chartColors[0] + '20',
                     tension: 0.4,
@@ -472,10 +459,13 @@ function initializeBusinessCharts() {
         chartInstances.inputCostsChart = new Chart(inputCostsCtx, {
             type: 'doughnut',
             data: {
-                labels: economicData.business_metrics.input_costs.sectors.map(d => d.sector),
+                labels: ['Businesses Reporting Cost Increases', 'Businesses Not Reporting Increases'],
                 datasets: [{
-                    data: economicData.business_metrics.input_costs.sectors.map(d => d.increase),
-                    backgroundColor: chartColors.slice(0, 4),
+                    data: [
+                        economicData.business_confidence.input_cost_pressures,
+                        100 - economicData.business_confidence.input_cost_pressures
+                    ],
+                    backgroundColor: [chartColors[0], chartColors[3]],
                     borderWidth: 2,
                     borderColor: '#fff'
                 }]
@@ -487,7 +477,7 @@ function initializeBusinessCharts() {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `${context.label}: ${context.parsed}% reporting cost increases`;
+                                return `${context.label}: ${context.parsed}%`;
                             }
                         }
                     },
@@ -540,11 +530,11 @@ function initializeSectoralCharts() {
         chartInstances.foodDrinkChart = new Chart(foodDrinkCtx, {
             type: 'bar',
             data: {
-                labels: economicData.sectoral_performance.food_drink.breakdown.map(d => d.category),
+                labels: economicData.sectoral_performance.food_drink_exports.historical.map(d => d.year),
                 datasets: [{
                     label: 'Export Value (£bn)',
-                    data: economicData.sectoral_performance.food_drink.breakdown.map(d => d.value_bn),
-                    backgroundColor: chartColors.slice(0, 2),
+                    data: economicData.sectoral_performance.food_drink_exports.historical.map(d => d.value),
+                    backgroundColor: chartColors[0],
                     borderWidth: 1
                 }]
             },
@@ -577,31 +567,58 @@ function initializeSectoralCharts() {
     const financialCtx = document.getElementById('financialServicesChart');
     if (financialCtx) {
         chartInstances.financialServicesChart = new Chart(financialCtx, {
-            type: 'doughnut',
+            type: 'line',
             data: {
-                labels: ['Financial Services', 'Other Sectors'],
+                labels: economicData.sectoral_performance.financial_services.historical_gva.map(d => d.year),
                 datasets: [{
-                    data: [
-                        economicData.sectoral_performance.financial_services.percentage_of_economy,
-                        100 - economicData.sectoral_performance.financial_services.percentage_of_economy
-                    ],
-                    backgroundColor: [chartColors[0], chartColors[3]],
-                    borderWidth: 2,
-                    borderColor: '#fff'
+                    label: 'GVA (£bn)',
+                    data: economicData.sectoral_performance.financial_services.historical_gva.map(d => d.value),
+                    borderColor: chartColors[0],
+                    backgroundColor: chartColors[0] + '20',
+                    tension: 0.4,
+                    yAxisID: 'y'
+                }, {
+                    label: '% of Economy',
+                    data: economicData.sectoral_performance.financial_services.historical_gva.map(d => d.percentage),
+                    borderColor: chartColors[1],
+                    backgroundColor: chartColors[1] + '20',
+                    tension: 0.4,
+                    yAxisID: 'y1'
                 }]
             },
             options: {
                 ...defaultChartOptions,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'GVA (£bn)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: '% of Economy'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                    }
+                },
                 plugins: {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `${context.label}: ${context.parsed}% of economy`;
+                                const unit = context.datasetIndex === 0 ? '£bn' : '%';
+                                return `${context.dataset.label}: ${context.parsed.y}${unit}`;
                             }
                         }
-                    },
-                    legend: {
-                        position: 'bottom'
                     }
                 }
             }
@@ -614,35 +631,54 @@ function initializeSectoralCharts() {
         chartInstances.tourismChart = new Chart(tourismCtx, {
             type: 'bar',
             data: {
-                labels: ['Enterprises', 'Employment (000s)', 'Turnover (£bn)', 'GVA (£bn)'],
+                labels: economicData.sectoral_performance.tourism.historical.map(d => d.year),
                 datasets: [{
-                    label: 'Tourism Metrics',
-                    data: [
-                        economicData.sectoral_performance.tourism.enterprises / 1000,
-                        economicData.sectoral_performance.tourism.employment / 1000,
-                        economicData.sectoral_performance.tourism.turnover_bn,
-                        economicData.sectoral_performance.tourism.gva_bn
-                    ],
+                    label: 'Employment (000s)',
+                    data: economicData.sectoral_performance.tourism.historical.map(d => d.employment / 1000),
                     backgroundColor: chartColors[0],
-                    borderWidth: 1
+                    borderWidth: 1,
+                    yAxisID: 'y'
+                }, {
+                    label: 'GVA (£bn)',
+                    data: economicData.sectoral_performance.tourism.historical.map(d => d.gva),
+                    backgroundColor: chartColors[1],
+                    borderWidth: 1,
+                    yAxisID: 'y1'
                 }]
             },
             options: {
                 ...defaultChartOptions,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Employment (000s)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'GVA (£bn)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                    }
+                },
                 plugins: {
-                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                const labels = ['thousand enterprises', 'thousand employed', '£bn turnover', '£bn GVA'];
-                                return `${context.parsed.y} ${labels[context.dataIndex]}`;
+                                const unit = context.datasetIndex === 0 ? 'k employed' : '£bn GVA';
+                                return `${context.dataset.label}: ${context.parsed.y} ${unit}`;
                             }
                         }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
                     }
                 }
             }
@@ -658,10 +694,10 @@ function initializeLabourCharts() {
         chartInstances.regionalEmploymentChart = new Chart(regionalCtx, {
             type: 'bar',
             data: {
-                labels: economicData.labour_market.regional_employment.map(d => d.region),
+                labels: economicData.headline_indicators.employment.regional.map(d => d.region),
                 datasets: [{
                     label: 'Employment Rate (%)',
-                    data: economicData.labour_market.regional_employment.map(d => d.rate),
+                    data: economicData.headline_indicators.employment.regional.map(d => d.employment_rate),
                     backgroundColor: chartColors[0],
                     borderWidth: 1
                 }]
@@ -704,9 +740,9 @@ function initializeLabourCharts() {
                 labels: ['Employed', 'Unemployed', 'Economically Inactive'],
                 datasets: [{
                     data: [
-                        economicData.labour_market.employment_rate,
-                        economicData.headline_indicators.unemployment.current,
-                        economicData.labour_market.economic_inactivity
+                        economicData.headline_indicators.employment.current.employment_rate,
+                        economicData.headline_indicators.employment.current.unemployment_rate,
+                        economicData.headline_indicators.employment.current.inactivity_rate
                     ],
                     backgroundColor: chartColors.slice(0, 3),
                     borderWidth: 2,
@@ -744,8 +780,8 @@ function initializeTradeCharts() {
                 labels: ['EU', 'Rest of World'],
                 datasets: [{
                     data: [
-                        economicData.trade_data.exports.eu_percentage,
-                        100 - economicData.trade_data.exports.eu_percentage
+                        economicData.trade_data.goods_exports.eu_percentage,
+                        100 - economicData.trade_data.goods_exports.eu_percentage
                     ],
                     backgroundColor: [chartColors[0], chartColors[1]],
                     borderWidth: 2,
@@ -767,19 +803,23 @@ function initializeTradeCharts() {
                         position: 'bottom'
                     }
                 }
-            });
+            }
+        });
     }
 
     // Imports chart
     const importsCtx = document.getElementById('importsChart');
     if (importsCtx) {
         chartInstances.importsChart = new Chart(importsCtx, {
-            type: 'pie',
+            type: 'doughnut',
             data: {
-                labels: economicData.trade_data.imports.top_sources.map(d => d.country),
+                labels: ['EU', 'Rest of World'],
                 datasets: [{
-                    data: economicData.trade_data.imports.top_sources.map(d => d.percentage),
-                    backgroundColor: chartColors.slice(0, 3),
+                    data: [
+                        economicData.trade_data.goods_imports.eu_percentage,
+                        100 - economicData.trade_data.goods_imports.eu_percentage
+                    ],
+                    backgroundColor: [chartColors[0], chartColors[1]],
                     borderWidth: 2,
                     borderColor: '#fff'
                 }]
@@ -799,7 +839,8 @@ function initializeTradeCharts() {
                         position: 'bottom'
                     }
                 }
-            });
+            }
+        });
     }
 
     // Export destinations chart
@@ -808,10 +849,10 @@ function initializeTradeCharts() {
         chartInstances.exportDestinationsChart = new Chart(exportDestCtx, {
             type: 'bar',
             data: {
-                labels: economicData.trade_data.exports.top_destinations.map(d => d.country),
+                labels: economicData.trade_data.goods_exports.top_destinations.map(d => d.country),
                 datasets: [{
                     label: 'Export Value (£bn)',
-                    data: economicData.trade_data.exports.top_destinations.map(d => d.value_bn),
+                    data: economicData.trade_data.goods_exports.top_destinations.map(d => d.value),
                     backgroundColor: chartColors[0],
                     borderWidth: 1
                 }]
@@ -838,7 +879,8 @@ function initializeTradeCharts() {
                         }
                     }
                 }
-            });
+            }
+        });
     }
 }
 
@@ -924,7 +966,8 @@ function initializeScenarioCharts() {
                      },
                  }
              }
-         });
+         }
+    });
     // initial draw once scenarios loaded
     updateScenarioChart();
 }

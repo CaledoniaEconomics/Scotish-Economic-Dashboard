@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Debug</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Dashboard Debug</h1>
+    <div id="debug-info"></div>
+    <canvas id="test-chart" width="400" height="200"></canvas>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const debugDiv = document.getElementById('debug-info');
+            
+            fetch('scottish_economic_data.json')
+                .then(response => response.json())
+                .then(data => {
+                    debugDiv.innerHTML += '<h3>Data Structure Check:</h3>';
+                    
+                    // Check GDP data
+                    if (data.headline_indicators && data.headline_indicators.gdp_growth) {
+                        const gdpQuarterly = data.headline_indicators.gdp_growth.quarterly;
+                        debugDiv.innerHTML += `<p>GDP Quarterly data points: ${gdpQuarterly ? gdpQuarterly.length : 'undefined'}</p>`;
+                        
+                        if (gdpQuarterly && gdpQuarterly.length > 0) {
+                            debugDiv.innerHTML += `<p>First GDP data point: ${JSON.stringify(gdpQuarterly[0])}</p>`;
+                            
+                            // Test creating a simple chart
+                            const ctx = document.getElementById('test-chart');
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: gdpQuarterly.map(d => d.period),
+                                    datasets: [{
+                                        label: 'Scotland GDP Growth',
+                                        data: gdpQuarterly.map(d => d.scotland),
+                                        borderColor: '#1FB8CD',
+                                        backgroundColor: '#1FB8CD20'
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false
+                                }
+                            });
+                            debugDiv.innerHTML += '<p>✅ Test chart created successfully</p>';
+                        }
+                    } else {
+                        debugDiv.innerHTML += '<p>❌ GDP data structure issue</p>';
+                    }
+                })
+                .catch(error => {
+                    debugDiv.innerHTML += `<p>❌ Error loading data: ${error.message}</p>`;
+                });
+        });
+    </script>
+</body>
+</html>

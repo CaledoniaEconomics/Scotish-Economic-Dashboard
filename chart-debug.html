@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Debugging Tool</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        .info { color: blue; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Chart Debugging Tool</h1>
+    
+    <div class="test-section">
+        <h2>Chart Canvas Elements Check</h2>
+        <div id="canvas-check"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Data Structure Analysis</h2>
+        <div id="data-analysis"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Individual Chart Tests</h2>
+        <div id="chart-tests"></div>
+    </div>
+    
+    <script>
+        let economicData = {};
+        const chartColors = ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F', '#DB4545', '#D2BA4C', '#964325', '#944454', '#13343B'];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            checkCanvasElements();
+            loadAndAnalyzeData();
+        });
+        
+        function checkCanvasElements() {
+            const canvasCheck = document.getElementById('canvas-check');
+            const expectedCanvas = [
+                'overviewGdpChart', 'overviewUnemploymentChart', 'overviewBusinessChart',
+                'gdpChart', 'inflationChart', 'unemploymentChart', 'employmentChart',
+                'businessConfidenceChart', 'businessBarometerChart', 'inputCostsChart',
+                'renewableEnergyChart', 'foodDrinkChart', 'financialServicesChart', 'tourismChart',
+                'regionalEmploymentChart', 'labourMarketChart',
+                'exportsChart', 'importsChart', 'exportDestinationsChart',
+                'scenarioChart'
+            ];
+            
+            canvasCheck.innerHTML = '<h3>Canvas Element Check:</h3>';
+            
+            // Check if we can access the main dashboard iframe or window
+            const iframe = document.createElement('iframe');
+            iframe.src = 'index.html';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            iframe.onload = function() {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                expectedCanvas.forEach(canvasId => {
+                    const element = iframeDoc.getElementById(canvasId);
+                    if (element) {
+                        canvasCheck.innerHTML += `<p class="success">✅ ${canvasId} canvas exists</p>`;
+                    } else {
+                        canvasCheck.innerHTML += `<p class="error">❌ ${canvasId} canvas missing</p>`;
+                    }
+                });
+            };
+        }
+        
+        function loadAndAnalyzeData() {
+            fetch('scottish_economic_data.json')
+                .then(response => response.json())
+                .then(data => {
+                    economicData = data;
+                    analyzeDataStructure();
+                    testIndividualCharts();
+                })
+                .catch(error => {
+                    document.getElementById('data-analysis').innerHTML = 
+                        `<p class="error">❌ Failed to load data: ${error.message}</p>`;
+                });
+        }
+        
+        function analyzeDataStructure() {
+            const dataAnalysis = document.getElementById('data-analysis');
+            dataAnalysis.innerHTML = '<h3>Data Structure Analysis:</h3>';
+            
+            // Check headline indicators
+            if (economicData.headline_indicators) {
+                // GDP data
+                if (economicData.headline_indicators.gdp_growth?.quarterly) {
+                    const gdpQ = economicData.headline_indicators.gdp_growth.quarterly;
+                    dataAnalysis.innerHTML += `<p class="success">✅ GDP quarterly: ${gdpQ.length} records</p>`;
+                    if (gdpQ[0]) {
+                        dataAnalysis.innerHTML += `<p class="info">GDP structure: ${Object.keys(gdpQ[0]).join(', ')}</p>`;
+                    }
+                } else {
+                    dataAnalysis.innerHTML += '<p class="error">❌ GDP quarterly data missing</p>';
+                }
+                
+                // Inflation data
+                if (economicData.headline_indicators.inflation?.monthly) {
+                    const inflation = economicData.headline_indicators.inflation.monthly;
+                    dataAnalysis.innerHTML += `<p class="success">✅ Inflation monthly: ${inflation.length} records</p>`;
+                    if (inflation[0]) {
+                        dataAnalysis.innerHTML += `<p class="info">Inflation structure: ${Object.keys(inflation[0]).join(', ')}</p>`;
+                    }
+                } else {
+                    dataAnalysis.innerHTML += '<p class="error">❌ Inflation monthly data missing</p>';
+                }
+                
+                // Unemployment data
+                if (economicData.headline_indicators.unemployment?.quarterly) {
+                    const unemployment = economicData.headline_indicators.unemployment.quarterly;
+                    dataAnalysis.innerHTML += `<p class="success">✅ Unemployment quarterly: ${unemployment.length} records</p>`;
+                    if (unemployment[0]) {
+                        dataAnalysis.innerHTML += `<p class="info">Unemployment structure: ${Object.keys(unemployment[0]).join(', ')}</p>`;
+                    }
+                } else {
+                    dataAnalysis.innerHTML += '<p class="error">❌ Unemployment quarterly data missing</p>';
+                }
+            }
+            
+            // Check business metrics
+            if (economicData.business_metrics) {
+                if (economicData.business_metrics.confidence_index?.quarterly) {
+                    const conf = economicData.business_metrics.confidence_index.quarterly;
+                    dataAnalysis.innerHTML += `<p class="success">✅ Business confidence: ${conf.length} records</p>`;
+                    if (conf[0]) {
+                        dataAnalysis.innerHTML += `<p class="info">Business confidence structure: ${Object.keys(conf[0]).join(', ')}</p>`;
+                    }
+                } else {
+                    dataAnalysis.innerHTML += '<p class="error">❌ Business confidence data missing</p>';
+                }
+            }
+        }
+        
+        function testIndividualCharts() {
+            const chartTests = document.getElementById('chart-tests');
+            chartTests.innerHTML = '<h3>Individual Chart Creation Tests:</h3>';
+            
+            // Test inflation chart
+            try {
+                if (economicData.headline_indicators?.inflation?.monthly) {
+                    const inflationData = economicData.headline_indicators.inflation.monthly;
+                    chartTests.innerHTML += '<p class="info">Testing inflation chart...</p>';
+                    chartTests.innerHTML += `<pre>Inflation data sample: ${JSON.stringify(inflationData[0], null, 2)}</pre>`;
+                    
+                    // Check if CPI and RPI properties exist
+                    if (inflationData[0] && inflationData[0].cpi !== undefined && inflationData[0].rpi !== undefined) {
+                        chartTests.innerHTML += '<p class="success">✅ Inflation data has CPI and RPI properties</p>';
+                    } else {
+                        chartTests.innerHTML += '<p class="error">❌ Inflation data missing CPI/RPI properties</p>';
+                    }
+                } else {
+                    chartTests.innerHTML += '<p class="error">❌ Inflation data structure invalid</p>';
+                }
+            } catch (error) {
+                chartTests.innerHTML += `<p class="error">❌ Inflation chart test failed: ${error.message}</p>`;
+            }
+            
+            // Test unemployment chart
+            try {
+                if (economicData.headline_indicators?.unemployment?.quarterly) {
+                    const unemploymentData = economicData.headline_indicators.unemployment.quarterly;
+                    chartTests.innerHTML += '<p class="info">Testing unemployment chart...</p>';
+                    chartTests.innerHTML += `<pre>Unemployment data sample: ${JSON.stringify(unemploymentData[0], null, 2)}</pre>`;
+                    
+                    // Check if scotland and uk properties exist
+                    if (unemploymentData[0] && unemploymentData[0].scotland !== undefined && unemploymentData[0].uk !== undefined) {
+                        chartTests.innerHTML += '<p class="success">✅ Unemployment data has scotland and uk properties</p>';
+                    } else {
+                        chartTests.innerHTML += '<p class="error">❌ Unemployment data missing scotland/uk properties</p>';
+                    }
+                } else {
+                    chartTests.innerHTML += '<p class="error">❌ Unemployment data structure invalid</p>';
+                }
+            } catch (error) {
+                chartTests.innerHTML += `<p class="error">❌ Unemployment chart test failed: ${error.message}</p>`;
+            }
+            
+            // Test business confidence chart
+            try {
+                if (economicData.business_metrics?.confidence_index?.quarterly) {
+                    const businessData = economicData.business_metrics.confidence_index.quarterly;
+                    chartTests.innerHTML += '<p class="info">Testing business confidence chart...</p>';
+                    chartTests.innerHTML += `<pre>Business confidence data sample: ${JSON.stringify(businessData[0], null, 2)}</pre>`;
+                    
+                    // Check if scotland and uk properties exist
+                    if (businessData[0] && businessData[0].scotland !== undefined && businessData[0].uk !== undefined) {
+                        chartTests.innerHTML += '<p class="success">✅ Business confidence data has scotland and uk properties</p>';
+                    } else {
+                        chartTests.innerHTML += '<p class="error">❌ Business confidence data missing scotland/uk properties</p>';
+                    }
+                } else {
+                    chartTests.innerHTML += '<p class="error">❌ Business confidence data structure invalid</p>';
+                }
+            } catch (error) {
+                chartTests.innerHTML += `<p class="error">❌ Business confidence chart test failed: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

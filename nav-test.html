@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Test</title>
+    <style>
+        .nav-tab {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .nav-tab.active {
+            background: #007bff;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Navigation Test</h1>
+    
+    <div>
+        <button class="nav-tab active" data-tab="overview">Overview</button>
+        <button class="nav-tab" data-tab="headline">Headline</button>
+        <button class="nav-tab" data-tab="business">Business</button>
+    </div>
+    
+    <div class="tab-content active" id="overview">
+        <h2>Overview Content</h2>
+        <p>This is the overview tab content.</p>
+    </div>
+    
+    <div class="tab-content" id="headline">
+        <h2>Headline Content</h2>
+        <p>This is the headline tab content.</p>
+    </div>
+    
+    <div class="tab-content" id="business">
+        <h2>Business Content</h2>
+        <p>This is the business tab content.</p>
+    </div>
+    
+    <div id="status"></div>
+    
+    <script>
+        // Test navigation functionality
+        function initializeNavigation() {
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const status = document.getElementById('status');
+
+            status.innerHTML = `<p>Found ${navTabs.length} nav tabs and ${tabContents.length} tab contents</p>`;
+
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+                    status.innerHTML += `<p>Clicked tab: ${targetTab}</p>`;
+                    
+                    // Update active tab
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === targetTab) {
+                            content.classList.add('active');
+                            status.innerHTML += `<p>Activated content: ${content.id}</p>`;
+                        }
+                    });
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeNavigation);
+    </script>
+</body>
+</html>

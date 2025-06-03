@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Dashboard Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        #test-chart { max-width: 400px; max-height: 200px; }
+    </style>
+</head>
+<body>
+    <h1>Scottish Economic Dashboard - Final Test</h1>
+    
+    <div class="test-section">
+        <h2>Component Tests</h2>
+        <div id="test-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Sample Chart</h2>
+        <canvas id="test-chart" width="400" height="200"></canvas>
+    </div>
+    
+    <div class="test-section">
+        <h2>Navigation Test</h2>
+        <button onclick="testNavigation()">Test Tab Navigation</button>
+        <div id="nav-results"></div>
+    </div>
+    
+    <script>
+        let economicData = {};
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const results = document.getElementById('test-results');
+            
+            results.innerHTML += '<h3>Testing Dashboard Components:</h3>';
+            
+            // Test 1: Chart.js
+            if (typeof Chart !== 'undefined') {
+                results.innerHTML += '<p class="success">✅ Chart.js loaded successfully</p>';
+            } else {
+                results.innerHTML += '<p class="error">❌ Chart.js failed to load</p>';
+                return;
+            }
+            
+            // Test 2: Load JSON data
+            fetch('scottish_economic_data.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    economicData = data;
+                    results.innerHTML += '<p class="success">✅ JSON data loaded successfully</p>';
+                    
+                    // Test data structure
+                    const sections = ['headline_indicators', 'business_metrics', 'sectoral_performance', 'labour_market', 'trade_data', 'scenarios'];
+                    sections.forEach(section => {
+                        if (data[section]) {
+                            results.innerHTML += `<p class="success">✅ ${section} section exists</p>`;
+                        } else {
+                            results.innerHTML += `<p class="error">❌ ${section} section missing</p>`;
+                        }
+                    });
+                    
+                    // Test specific data paths used by charts
+                    if (data.headline_indicators?.gdp_growth?.quarterly) {
+                        const gdpData = data.headline_indicators.gdp_growth.quarterly;
+                        results.innerHTML += `<p class="success">✅ GDP quarterly data: ${gdpData.length} records</p>`;
+                        
+                        if (gdpData.length > 0) {
+                            const firstRecord = gdpData[0];
+                            results.innerHTML += `<p class="info">First GDP record: period="${firstRecord.period}", scotland=${firstRecord.scotland}</p>`;
+                            
+                            // Test creating a chart with this data
+                            testChart(gdpData);
+                        }
+                    } else {
+                        results.innerHTML += '<p class="error">❌ GDP quarterly data structure invalid</p>';
+                    }
+                    
+                    // Test unemployment data
+                    if (data.headline_indicators?.unemployment?.quarterly) {
+                        results.innerHTML += '<p class="success">✅ Unemployment data structure valid</p>';
+                    } else {
+                        results.innerHTML += '<p class="error">❌ Unemployment data structure invalid</p>';
+                    }
+                    
+                    // Test app.js loading
+                    testAppJS();
+                })
+                .catch(error => {
+                    results.innerHTML += `<p class="error">❌ Failed to load JSON: ${error.message}</p>`;
+                });
+        });
+        
+        function testChart(gdpData) {
+            const results = document.getElementById('test-results');
+            
+            try {
+                const ctx = document.getElementById('test-chart');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: gdpData.map(d => d.period),
+                        datasets: [{
+                            label: 'Scotland GDP Growth (%)',
+                            data: gdpData.map(d => d.scotland),
+                            borderColor: '#1FB8CD',
+                            backgroundColor: '#1FB8CD20',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Test GDP Chart'
+                            }
+                        }
+                    }
+                });
+                results.innerHTML += '<p class="success">✅ Sample chart created successfully</p>';
+            } catch (error) {
+                results.innerHTML += `<p class="error">❌ Chart creation failed: ${error.message}</p>`;
+            }
+        }
+        
+        function testAppJS() {
+            const results = document.getElementById('test-results');
+            
+            fetch('app.js')
+                .then(response => {
+                    if (response.ok) {
+                        results.innerHTML += '<p class="success">✅ app.js file accessible</p>';
+                        
+                        // Test if we can include the script
+                        const script = document.createElement('script');
+                        script.src = 'app.js';
+                        script.onload = function() {
+                            results.innerHTML += '<p class="success">✅ app.js loaded without syntax errors</p>';
+                            
+                            // Test if functions are defined
+                            if (typeof initializeNavigation === 'function') {
+                                results.innerHTML += '<p class="success">✅ initializeNavigation function exists</p>';
+                            } else {
+                                results.innerHTML += '<p class="error">❌ initializeNavigation function not found</p>';
+                            }
+                        };
+                        script.onerror = function() {
+                            results.innerHTML += '<p class="error">❌ app.js failed to load - syntax error</p>';
+                        };
+                        document.head.appendChild(script);
+                    } else {
+                        results.innerHTML += '<p class="error">❌ app.js file not accessible</p>';
+                    }
+                })
+                .catch(error => {
+                    results.innerHTML += `<p class="error">❌ Error checking app.js: ${error.message}</p>`;
+                });
+        }
+        
+        function testNavigation() {
+            const navResults = document.getElementById('nav-results');
+            navResults.innerHTML = '<h4>Navigation Test Results:</h4>';
+            
+            // Open the main dashboard in a new window for testing
+            const dashboardWindow = window.open('index.html', '_blank');
+            
+            if (dashboardWindow) {
+                navResults.innerHTML += '<p class="success">✅ Dashboard opened in new window</p>';
+                navResults.innerHTML += '<p class="info">Check the new window to test tab navigation and chart rendering</p>';
+            } else {
+                navResults.innerHTML += '<p class="error">❌ Could not open dashboard (popup blocked?)</p>';
+            }
+        }
+    </script>
+</body>
+</html>

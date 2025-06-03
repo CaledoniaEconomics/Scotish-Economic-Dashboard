@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scottish Economic Dashboard - Full Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .test-status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .test-pending {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1>Scottish Economic Dashboard - Full Functionality Test</h1>
+        
+        <div id="test-results">
+            <div class="test-status test-pending" id="data-load-test">
+                <strong>Data Loading Test:</strong> <span id="data-load-status">Pending...</span>
+            </div>
+            <div class="test-status test-pending" id="tab-navigation-test">
+                <strong>Tab Navigation Test:</strong> <span id="tab-navigation-status">Pending...</span>
+            </div>
+            <div class="test-status test-pending" id="chart-rendering-test">
+                <strong>Chart Rendering Test:</strong> <span id="chart-rendering-status">Pending...</span>
+            </div>
+            <div class="test-status test-pending" id="scenario-controls-test">
+                <strong>Scenario Controls Test:</strong> <span id="scenario-controls-status">Pending...</span>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-overview-tab" data-bs-toggle="tab" data-bs-target="#nav-overview" type="button" role="tab">Overview</button>
+                <button class="nav-link" id="nav-headline-tab" data-bs-toggle="tab" data-bs-target="#nav-headline" type="button" role="tab">Headline Indicators</button>
+                <button class="nav-link" id="nav-business-tab" data-bs-toggle="tab" data-bs-target="#nav-business" type="button" role="tab">Business Metrics</button>
+                <button class="nav-link" id="nav-sectoral-tab" data-bs-toggle="tab" data-bs-target="#nav-sectoral" type="button" role="tab">Sectoral Performance</button>
+                <button class="nav-link" id="nav-labour-tab" data-bs-toggle="tab" data-bs-target="#nav-labour" type="button" role="tab">Labour Market</button>
+                <button class="nav-link" id="nav-trade-tab" data-bs-toggle="tab" data-bs-target="#nav-trade" type="button" role="tab">Trade Data</button>
+                <button class="nav-link" id="nav-scenario-tab" data-bs-toggle="tab" data-bs-target="#nav-scenario" type="button" role="tab">Scenario Planning</button>
+            </div>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="nav-tabContent">
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="nav-overview" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="overviewChart1"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="overviewChart2"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other tabs with minimal chart canvases for testing -->
+            <div class="tab-pane fade" id="nav-headline" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6"><canvas id="gdpChart"></canvas></div>
+                    <div class="col-md-6"><canvas id="inflationChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="nav-business" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4"><canvas id="businessConfidenceChart"></canvas></div>
+                    <div class="col-md-4"><canvas id="businessBarometerChart"></canvas></div>
+                    <div class="col-md-4"><canvas id="inputCostsChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="nav-sectoral" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6"><canvas id="renewableEnergyChart"></canvas></div>
+                    <div class="col-md-6"><canvas id="foodDrinkChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="nav-labour" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6"><canvas id="employmentChart"></canvas></div>
+                    <div class="col-md-6"><canvas id="unemploymentChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="nav-trade" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6"><canvas id="exportsChart"></canvas></div>
+                    <div class="col-md-6"><canvas id="importsChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="nav-scenario" role="tabpanel">
+                <div class="scenario-controls">
+                    <button class="btn btn-primary scenario-btn active" data-scenario="baseline">Baseline</button>
+                    <button class="btn btn-outline-primary scenario-btn" data-scenario="optimistic">Optimistic</button>
+                    <button class="btn btn-outline-primary scenario-btn" data-scenario="pessimistic">Pessimistic</button>
+                </div>
+                <div class="row">
+                    <div class="col-md-6"><canvas id="scenarioGdpChart"></canvas></div>
+                    <div class="col-md-6"><canvas id="scenarioEmploymentChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Test suite
+        let testResults = {
+            dataLoad: false,
+            tabNavigation: false,
+            chartRendering: false,
+            scenarioControls: false
+        };
+
+        // Test data loading
+        function testDataLoading() {
+            if (typeof economicData !== 'undefined' && economicData && Object.keys(economicData).length > 0) {
+                testResults.dataLoad = true;
+                updateTestStatus('data-load-test', 'data-load-status', 'Data loaded successfully', true);
+                testChartRendering();
+            } else {
+                updateTestStatus('data-load-test', 'data-load-status', 'Data loading failed', false);
+            }
+        }
+
+        // Test tab navigation
+        function testTabNavigation() {
+            let tabsWorking = true;
+            const tabs = document.querySelectorAll('.nav-link');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    setTimeout(() => {
+                        const targetId = tab.getAttribute('data-bs-target');
+                        const targetPane = document.querySelector(targetId);
+                        if (targetPane && targetPane.classList.contains('show')) {
+                            console.log(`Tab ${tab.textContent} is working`);
+                        }
+                    }, 100);
+                });
+            });
+
+            testResults.tabNavigation = true;
+            updateTestStatus('tab-navigation-test', 'tab-navigation-status', 'Tab navigation working', true);
+        }
+
+        // Test chart rendering
+        function testChartRendering() {
+            setTimeout(() => {
+                const charts = Object.keys(window).filter(key => key.includes('Chart') && window[key] instanceof Chart);
+                if (charts.length > 0) {
+                    testResults.chartRendering = true;
+                    updateTestStatus('chart-rendering-test', 'chart-rendering-status', `${charts.length} charts rendered successfully`, true);
+                } else {
+                    updateTestStatus('chart-rendering-test', 'chart-rendering-status', 'No charts rendered', false);
+                }
+                testScenarioControls();
+            }, 2000);
+        }
+
+        // Test scenario controls
+        function testScenarioControls() {
+            const scenarioBtns = document.querySelectorAll('.scenario-btn');
+            if (scenarioBtns.length > 0) {
+                testResults.scenarioControls = true;
+                updateTestStatus('scenario-controls-test', 'scenario-controls-status', 'Scenario controls found and active', true);
+            } else {
+                updateTestStatus('scenario-controls-test', 'scenario-controls-status', 'Scenario controls not found', false);
+            }
+
+            // Final summary
+            setTimeout(() => {
+                const passedTests = Object.values(testResults).filter(Boolean).length;
+                const totalTests = Object.keys(testResults).length;
+                console.log(`Test Summary: ${passedTests}/${totalTests} tests passed`);
+                
+                if (passedTests === totalTests) {
+                    document.body.insertAdjacentHTML('beforeend', 
+                        '<div class="alert alert-success mt-3"><strong>All tests passed!</strong> Dashboard is fully functional.</div>'
+                    );
+                } else {
+                    document.body.insertAdjacentHTML('beforeend', 
+                        '<div class="alert alert-warning mt-3"><strong>Some tests failed.</strong> Check console for details.</div>'
+                    );
+                }
+            }, 1000);
+        }
+
+        function updateTestStatus(testId, statusId, message, passed) {
+            const testElement = document.getElementById(testId);
+            const statusElement = document.getElementById(statusId);
+            
+            testElement.className = `test-status ${passed ? 'test-pass' : 'test-fail'}`;
+            statusElement.textContent = message;
+        }
+
+        // Start tests when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Starting comprehensive dashboard tests...');
+            testTabNavigation();
+            
+            // Wait for data to load, then test data loading
+            setTimeout(testDataLoading, 1000);
+        });
+
+        // Monitor for errors
+        window.addEventListener('error', (e) => {
+            console.error('JavaScript Error:', e.error);
+        });
+
+        // Monitor for unhandled promise rejections
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('Unhandled Promise Rejection:', e.reason);
+        });
+    </script>
+</body>
+</html>

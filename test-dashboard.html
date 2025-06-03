@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="test-status" style="padding: 20px; background: #f0f0f0; margin: 10px;">
+        <h2>Dashboard Loading Test</h2>
+        <div id="status">Testing...</div>
+        <div id="errors" style="color: red; margin-top: 10px;"></div>
+        <div id="success" style="color: green; margin-top: 10px;"></div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const errorsDiv = document.getElementById('errors');
+        const successDiv = document.getElementById('success');
+        
+        // Capture any errors
+        window.addEventListener('error', function(e) {
+            errorsDiv.innerHTML += `<div>Error: ${e.message} at ${e.filename}:${e.lineno}</div>`;
+        });
+
+        // Test data loading
+        statusDiv.textContent = 'Loading economic data...';
+        
+        fetch('scottish_economic_data.json')
+            .then(response => response.json())
+            .then(data => {
+                statusDiv.textContent = 'Data loaded successfully!';
+                
+                // Test key data structures
+                const tests = [
+                    ['GDP data', () => data.headline_indicators.gdp_growth.annual.length > 0],
+                    ['Business confidence', () => data.business_confidence.quarterly.length > 0],
+                    ['Employment data', () => data.headline_indicators.employment.quarterly.length > 0],
+                    ['Sectoral performance', () => data.sectoral_performance.renewable_energy.breakdown.length > 0],
+                    ['Trade data', () => data.trade_data.goods_exports.top_destinations.length > 0],
+                    ['Scenarios', () => data.scenarios.baseline.gdp.length > 0]
+                ];
+                
+                let passed = 0;
+                tests.forEach(([name, test]) => {
+                    try {
+                        if (test()) {
+                            successDiv.innerHTML += `<div>✓ ${name}</div>`;
+                            passed++;
+                        } else {
+                            errorsDiv.innerHTML += `<div>✗ ${name} - test failed</div>`;
+                        }
+                    } catch (e) {
+                        errorsDiv.innerHTML += `<div>✗ ${name} - ${e.message}</div>`;
+                    }
+                });
+                
+                statusDiv.textContent = `Tests completed: ${passed}/${tests.length} passed`;
+            })
+            .catch(error => {
+                errorsDiv.innerHTML += `<div>Failed to load data: ${error.message}</div>`;
+                statusDiv.textContent = 'Data loading failed!';
+            });
+    </script>
+</body>
+</html>

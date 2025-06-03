@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Diagnostics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .diagnostic-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 400px;
+            background: white;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 9999;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .status-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .status-pass { color: green; }
+        .status-fail { color: red; }
+        .status-warn { color: orange; }
+        #console-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Diagnostic Panel -->
+    <div class="diagnostic-panel">
+        <h5>🔧 Dashboard Diagnostics</h5>
+        <div id="status-container">
+            <div class="status-item">
+                <strong>Data Loading:</strong> <span id="data-status">Checking...</span>
+            </div>
+            <div class="status-item">
+                <strong>Charts Created:</strong> <span id="charts-status">Checking...</span>
+            </div>
+            <div class="status-item">
+                <strong>Tab Navigation:</strong> <span id="nav-status">Checking...</span>
+            </div>
+            <div class="status-item">
+                <strong>JavaScript Errors:</strong> <span id="error-status">Monitoring...</span>
+            </div>
+        </div>
+        <h6 class="mt-3">Console Log:</h6>
+        <div id="console-log"></div>
+        <button class="btn btn-sm btn-primary mt-2" onclick="runFullDiagnostic()">🔄 Refresh Diagnostics</button>
+    </div>
+
+    <!-- Include the main dashboard -->
+    <div class="container-fluid">
+        <header class="bg-primary text-white p-3 mb-4">
+            <h1>Scottish Economic Health Dashboard</h1>
+            <p class="mb-0">Real-time economic indicators and performance metrics</p>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-overview-tab" data-bs-toggle="tab" data-bs-target="#nav-overview" type="button" role="tab" aria-controls="nav-overview" aria-selected="true">Overview</button>
+                <button class="nav-link" id="nav-headline-tab" data-bs-toggle="tab" data-bs-target="#nav-headline" type="button" role="tab" aria-controls="nav-headline" aria-selected="false">Headline Indicators</button>
+                <button class="nav-link" id="nav-business-tab" data-bs-toggle="tab" data-bs-target="#nav-business" type="button" role="tab" aria-controls="nav-business" aria-selected="false">Business Metrics</button>
+                <button class="nav-link" id="nav-sectoral-tab" data-bs-toggle="tab" data-bs-target="#nav-sectoral" type="button" role="tab" aria-controls="nav-sectoral" aria-selected="false">Sectoral Performance</button>
+                <button class="nav-link" id="nav-labour-tab" data-bs-toggle="tab" data-bs-target="#nav-labour" type="button" role="tab" aria-controls="nav-labour" aria-selected="false">Labour Market</button>
+                <button class="nav-link" id="nav-trade-tab" data-bs-toggle="tab" data-bs-target="#nav-trade" type="button" role="tab" aria-controls="nav-trade" aria-selected="false">Trade Data</button>
+                <button class="nav-link" id="nav-scenario-tab" data-bs-toggle="tab" data-bs-target="#nav-scenario" type="button" role="tab" aria-controls="nav-scenario" aria-selected="false">Scenario Planning</button>
+            </div>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="nav-tabContent">
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="nav-overview" role="tabpanel" aria-labelledby="nav-overview-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">GDP Growth Overview</div>
+                            <div class="card-body">
+                                <canvas id="overviewGdpChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Employment Overview</div>
+                            <div class="card-body">
+                                <canvas id="overviewEmploymentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Headline Indicators Tab -->
+            <div class="tab-pane fade" id="nav-headline" role="tabpanel" aria-labelledby="nav-headline-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">GDP Growth</div>
+                            <div class="card-body">
+                                <canvas id="gdpChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Inflation</div>
+                            <div class="card-body">
+                                <canvas id="inflationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Employment Rate</div>
+                            <div class="card-body">
+                                <canvas id="employmentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Unemployment Rate</div>
+                            <div class="card-body">
+                                <canvas id="unemploymentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Metrics Tab -->
+            <div class="tab-pane fade" id="nav-business" role="tabpanel" aria-labelledby="nav-business-tab">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Business Confidence</div>
+                            <div class="card-body">
+                                <canvas id="businessConfidenceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Business Barometer</div>
+                            <div class="card-body">
+                                <canvas id="businessBarometerChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Input Cost Pressures</div>
+                            <div class="card-body">
+                                <canvas id="inputCostsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectoral Performance Tab -->
+            <div class="tab-pane fade" id="nav-sectoral" role="tabpanel" aria-labelledby="nav-sectoral-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Renewable Energy</div>
+                            <div class="card-body">
+                                <canvas id="renewableEnergyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Food & Drink Exports</div>
+                            <div class="card-body">
+                                <canvas id="foodDrinkChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Financial Services</div>
+                            <div class="card-body">
+                                <canvas id="financialServicesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Tourism</div>
+                            <div class="card-body">
+                                <canvas id="tourismChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Labour Market Tab -->
+            <div class="tab-pane fade" id="nav-labour" role="tabpanel" aria-labelledby="nav-labour-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Regional Employment</div>
+                            <div class="card-body">
+                                <canvas id="regionalEmploymentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Labour Market Overview</div>
+                            <div class="card-body">
+                                <canvas id="labourMarketOverviewChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trade Data Tab -->
+            <div class="tab-pane fade" id="nav-trade" role="tabpanel" aria-labelledby="nav-trade-tab">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Exports to EU</div>
+                            <div class="card-body">
+                                <canvas id="exportsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Imports from EU</div>
+                            <div class="card-body">
+                                <canvas id="importsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Export Destinations</div>
+                            <div class="card-body">
+                                <canvas id="exportDestinationsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario Planning Tab -->
+            <div class="tab-pane fade" id="nav-scenario" role="tabpanel" aria-labelledby="nav-scenario-tab">
+                <div class="scenario-controls mb-3">
+                    <button class="btn btn-primary scenario-btn active" data-scenario="baseline">Baseline</button>
+                    <button class="btn btn-outline-primary scenario-btn" data-scenario="optimistic">Optimistic</button>
+                    <button class="btn btn-outline-primary scenario-btn" data-scenario="pessimistic">Pessimistic</button>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">GDP Projections</div>
+                            <div class="card-body">
+                                <canvas id="scenarioGdpChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Employment Projections</div>
+                            <div class="card-body">
+                                <canvas id="scenarioEmploymentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Diagnostic functions
+        let diagnosticLog = [];
+        let errorCount = 0;
+        let chartCount = 0;
+
+        function logDiagnostic(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            diagnosticLog.push(`[${timestamp}] ${message}`);
+            updateConsoleDisplay();
+            console.log(`DIAGNOSTIC: ${message}`);
+        }
+
+        function updateConsoleDisplay() {
+            const consoleElement = document.getElementById('console-log');
+            if (consoleElement) {
+                consoleElement.innerHTML = diagnosticLog.slice(-20).join('<br>');
+                consoleElement.scrollTop = consoleElement.scrollHeight;
+            }
+        }
+
+        function updateStatus(elementId, message, className) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.className = className;
+            }
+        }
+
+        function runFullDiagnostic() {
+            logDiagnostic('Running full diagnostic...');
+            
+            // Check data loading
+            if (typeof economicData !== 'undefined' && economicData && Object.keys(economicData).length > 0) {
+                updateStatus('data-status', 'Loaded ✓', 'status-pass');
+                logDiagnostic('Economic data loaded successfully');
+            } else {
+                updateStatus('data-status', 'Failed ✗', 'status-fail');
+                logDiagnostic('Economic data loading failed', 'error');
+            }
+
+            // Check charts
+            const chartKeys = Object.keys(window).filter(key => key.includes('Chart') && window[key] instanceof Chart);
+            chartCount = chartKeys.length;
+            if (chartCount > 0) {
+                updateStatus('charts-status', `${chartCount} created ✓`, 'status-pass');
+                logDiagnostic(`${chartCount} charts created successfully`);
+            } else {
+                updateStatus('charts-status', 'None created ✗', 'status-fail');
+                logDiagnostic('No charts were created', 'error');
+            }
+
+            // Check navigation
+            const navTabs = document.querySelectorAll('.nav-link');
+            if (navTabs.length >= 7) {
+                updateStatus('nav-status', 'Working ✓', 'status-pass');
+                logDiagnostic('Navigation tabs found and ready');
+            } else {
+                updateStatus('nav-status', 'Issues found ✗', 'status-fail');
+                logDiagnostic('Navigation issues detected', 'error');
+            }
+
+            // Update error count
+            updateStatus('error-status', errorCount > 0 ? `${errorCount} errors ⚠` : 'None ✓', 
+                        errorCount > 0 ? 'status-warn' : 'status-pass');
+        }
+
+        // Error monitoring
+        window.addEventListener('error', (e) => {
+            errorCount++;
+            logDiagnostic(`JavaScript Error: ${e.message} at ${e.filename}:${e.lineno}`, 'error');
+            updateStatus('error-status', `${errorCount} errors ⚠`, 'status-warn');
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            errorCount++;
+            logDiagnostic(`Promise Rejection: ${e.reason}`, 'error');
+            updateStatus('error-status', `${errorCount} errors ⚠`, 'status-warn');
+        });
+
+        // Monitor chart creation
+        const originalChart = window.Chart;
+        if (originalChart) {
+            window.Chart = function(...args) {
+                const chart = new originalChart(...args);
+                chartCount++;
+                logDiagnostic(`Chart created: ${chart.canvas.id || 'unnamed'}`);
+                setTimeout(runFullDiagnostic, 100);
+                return chart;
+            };
+            Object.setPrototypeOf(window.Chart, originalChart);
+            Object.defineProperty(window.Chart, 'prototype', { value: originalChart.prototype });
+        }
+
+        // Initialize diagnostics
+        document.addEventListener('DOMContentLoaded', () => {
+            logDiagnostic('Dashboard diagnostics initialized');
+            setTimeout(runFullDiagnostic, 2000);
+        });
+
+        // Monitor tab clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('nav-link')) {
+                logDiagnostic(`Tab clicked: ${e.target.textContent.trim()}`);
+            }
+        });
+    </script>
+</body>
+</html>

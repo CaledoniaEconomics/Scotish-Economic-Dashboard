@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Testing Dashboard Components</h1>
+    <div id="test-results"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const results = document.getElementById('test-results');
+            
+            // Test 1: Check if Chart.js is loaded
+            if (typeof Chart !== 'undefined') {
+                results.innerHTML += '<p>✅ Chart.js loaded successfully</p>';
+            } else {
+                results.innerHTML += '<p>❌ Chart.js failed to load</p>';
+            }
+            
+            // Test 2: Check if we can fetch the JSON data
+            fetch('scottish_economic_data.json')
+                .then(response => response.json())
+                .then(data => {
+                    results.innerHTML += '<p>✅ JSON data loaded successfully</p>';
+                    results.innerHTML += `<p>Data contains ${Object.keys(data).length} main sections</p>`;
+                    
+                    // Test 3: Check if the main data sections exist
+                    const expectedSections = ['headline_indicators', 'business_metrics', 'sectoral_performance', 'labour_market', 'trade_data', 'scenarios'];
+                    expectedSections.forEach(section => {
+                        if (data[section]) {
+                            results.innerHTML += `<p>✅ ${section} section exists</p>`;
+                        } else {
+                            results.innerHTML += `<p>❌ ${section} section missing</p>`;
+                        }
+                    });
+                })
+                .catch(error => {
+                    results.innerHTML += '<p>❌ Failed to load JSON data: ' + error.message + '</p>';
+                });
+            
+            // Test 4: Test if app.js loads without errors
+            const script = document.createElement('script');
+            script.src = 'app.js';
+            script.onload = function() {
+                results.innerHTML += '<p>✅ app.js loaded successfully</p>';
+            };
+            script.onerror = function() {
+                results.innerHTML += '<p>❌ app.js failed to load</p>';
+            };
+            document.head.appendChild(script);
+        });
+    </script>
+</body>
+</html>
