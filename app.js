@@ -1,11 +1,8 @@
 // Scottish Economic Health Dashboard JavaScript
 
-// Placeholder for loaded economic data (includes precomputed scenarios)
-let economicData = {
-  /* ... existing economic data ... */,  // comma added here
-  // placeholder for fetched scenario outputs
-  scenarios: {}
-};
+// economicData will be loaded from JSON on startup
+let economicData = {};
+
 // Current scenario selection for chart
 let currentScenario = 'baseline';
 
@@ -21,7 +18,7 @@ const defaultChartOptions = {
     maintainAspectRatio: false,
     interaction: {
         intersect: false,
-        mode: 'index'
+        mode: 'index',
     },
     onResize: function(chart, size) {
         // Prevent charts from growing beyond their container's max height
@@ -33,24 +30,20 @@ const defaultChartOptions = {
     }
 };
 
-// Initialize dashboard
+// Initialize dashboard once data is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    initializeNavigation();
-    initializeCharts();
-    initializeScenarioControls();
-    initializeExportFunctionality();
-
-    // fetch and wire in precomputed scenarios after DOM ready
     fetch('scottish_economic_data.json')
       .then(r => r.json())
-      .then(d => {
-          if (d.scenarios) {
-              economicData.scenarios = d.scenarios;
-              // mark default scenario button active
-              const defaultBtn = document.querySelector(`[data-scenario="${currentScenario}"]`);
-              if (defaultBtn) defaultBtn.classList.add('active');
-              initializeScenarioCharts();
-          }
+      .then(data => {
+          economicData = data;
+          initializeNavigation();
+          initializeCharts();
+          initializeScenarioControls();
+          initializeExportFunctionality();
+          // Activate default scenario button
+          const defaultBtn = document.querySelector(`[data-scenario="${currentScenario}"]`);
+          if (defaultBtn) defaultBtn.classList.add('active');
+          initializeScenarioCharts();
       })
       .catch(console.error);
 });
